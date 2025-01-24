@@ -18,5 +18,8 @@ var challangeAuth = basicAuth(
 
 router.get('/pegar_produtos', challangeAuth, productController.getAllProducts);
 router.post('/criar_produto', challangeAuth, upload.single('img'), productController.addProduct);
+router.get('/pegar_detalhes_produto', productController.getProductDetails);
+router.post('/atualizar_produto', challangeAuth, productController.updateProduct);
+router.post('/deletar_produto', challangeAuth, productController.deleteProduct);
 
 module.exports = router;
