@@ -62,21 +62,17 @@ exports.registerUser = async (req, res) => {
 
 };
 
-exports.updateUser = async (req, sec) => {
-    if (req.body.hasOwnProperty('novo_nome') && req.body.hasOwnProperty('novo_email') &&) {
-        
+exports.updateUser = async (req, res) => {
+    if (req.body.hasOwnProperty('novo_nome') || req.body.hasOwnProperty('novo_email')) {
+
         const {novo_nome, novo_email} = req.body;
+        const {login} = req.auth.user;
 
-        const hasUserQuery = await db.query (
-            "SELECT login FROM usuarios WHERE login=$1 AND token=$2",
-            [login, token]
-        );
-
-        if (hasUserQuery.rows.length === 1) {
+        if (novo_nome) {
             try {
-                const updateUserQuery = await db.query (
-                    "UPDATE usuarios SET nome=$1, email=$2 WHERE login=$3",
-                    [nome, email, login]
+                const updateNameQuery = await db.query (
+                    "UPDATE usuarios SET nome=$1 WHERE login=$2",
+                    [novo_nome, login]
                 );
 
                 res.status(200).send(
@@ -84,32 +80,46 @@ exports.updateUser = async (req, sec) => {
                         sucesso : 1
                     }
                 );
-            }
-            catch (err) {
+            
+            } catch (err) {
                 var errorMsg = "erro BD: ";
-                res.status(200).send(
+                res.status(500).send(
                     {
                         sucesso : 0,
                         cod_erro : 2,
                         erro : errorMsg.concat(err)
                     }
                 );
-            }
+            }            
         }
-        else {
-            var errorMsg = "usuario nao encontrado";
-            res.status(200).send(
-                {
-                    sucesso : 0,
-                    cod_erro : 1,
-                    erro : errorMsg
-                }
-            );
+
+        if (novo_email) {
+            try {
+                const updateEmailQuery = await db.query (
+                    "UPDATE usuarios SET email=$1 WHERE login=$2",
+                    [novo_email, login]
+                );
+                res.status(200).send(
+                    {
+                        sucesso : 1
+                    }
+                );
+
+            } catch (err) {
+                var errorMsg = "erro BD: ";
+                res.status(500).send(
+                    {
+                        sucesso : 0,
+                        cod_erro : 2,
+                        erro : errorMsg.concat(err)
+                    }
+                );
+            }            
         }
-    }
-    else {
+        
+    } else {
         var errorMsg = "faltam parametros";
-        res.status(200).send(
+        res.status(400).send(
             {
                 sucesso : 0,
                 cod_erro : 3,
@@ -117,4 +127,109 @@ exports.updateUser = async (req, sec) => {
             }
         );
     }
-}
+};
+
+exports.changePassword = async (req, res) => {
+    if (req.body.hasOwnProperty('nova_senha')) {
+        const {nova_senha} = req.body;
+        const {login} = req.auth.user;
+
+        var token = bcrypt.hash(nova_senha);
+
+        try {
+            const updatePasswordQuery = await db.query (
+                "UPDATE usuarios SET token=$1 WHERE login=$2",
+                [token, login]
+            );
+
+            res.status(200).send(
+                {
+                    sucesso : 1
+                }
+            );
+        } catch (err) {
+            var errorMsg = "erro BD: ";
+            res.status(500).send(
+                {
+                    sucesso : 0,
+                    cod_erro : 2,
+                    erro : errorMsg.concat(err)
+                }
+            );
+        }
+    } else {
+        var errorMsg = "faltam parametros";
+        res.status(400).send(
+            {
+                sucesso : 0,
+                cod_erro : 3,
+                erro : errorMsg
+            }
+        );
+    }
+};
+
+exports.deleteUser = async (req, res) => {
+    const {login} = req.auth.user;
+
+    try {
+        const deleteUserQuery = await db.query (
+            "DELETE FROM usuarios WHERE login=$1",
+            [login]
+        );
+
+        res.status(200).send(
+            {
+                sucesso : 1
+            }
+        );
+    } catch (err) {
+        var errorMsg = "erro BD: ";
+        res.status(500).send(
+            {
+                sucesso : 0,
+                cod_erro : 2,
+                erro : errorMsg.concat(err)
+            }
+        );
+    }
+};
+
+exports.getUserDetails = async (req, res) => {
+    const {login} = req.params;
+    
+    if (login) {
+        try {
+            const getUserQuery = await db.query (
+                "SELECT nome, email FROM usuarios WHERE login=$1",
+                [login]
+            );
+
+            res.status(200).send(
+                {
+                    sucesso : 1,
+                    nome : getUserQuery.rows[0]['nome'],
+                    email : getUserQuery.rows[0]['email']
+                }
+            );
+        } catch (err) {
+            var errorMsg = "erro BD: ";
+            res.status(500).send(
+                {
+                    sucesso : 0,
+                    cod_erro : 2,
+                    erro : errorMsg.concat(err)
+                }
+            );
+        }
+    } else {
+        var errorMsg = "faltam parametros";
+        res.status(400).send(
+            {
+                sucesso : 0,
+                cod_erro : 3,
+                erro : errorMsg
+            }
+        );
+    }
+};
