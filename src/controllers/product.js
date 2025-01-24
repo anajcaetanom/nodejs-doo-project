@@ -281,7 +281,7 @@ exports.updateProduct = async (req, res) => {
         
     } else {
         var erroMsg = "faltam parametros";
-        res.status(400).send(
+        res.status(200).send(
             {
                 sucesso : 0,
                 cod_erro : 3,

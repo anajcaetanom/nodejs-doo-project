@@ -9,7 +9,7 @@ exports.authenticate = async (login, senha, cb) => {
     );
 
     if (rows.length !== 0) {
-        if(bcrypt.verify(senha, rows[0]['token'])) {
+        if (bcrypt.verify(senha, rows[0]['token'])) {
             return cb(null, true);
         }
     }

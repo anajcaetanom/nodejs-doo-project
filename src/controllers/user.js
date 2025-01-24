@@ -83,7 +83,7 @@ exports.updateUser = async (req, res) => {
             
             } catch (err) {
                 var errorMsg = "erro BD: ";
-                res.status(500).send(
+                res.status(200).send(
                     {
                         sucesso : 0,
                         cod_erro : 2,
@@ -107,7 +107,7 @@ exports.updateUser = async (req, res) => {
 
             } catch (err) {
                 var errorMsg = "erro BD: ";
-                res.status(500).send(
+                res.status(200).send(
                     {
                         sucesso : 0,
                         cod_erro : 2,
@@ -119,7 +119,7 @@ exports.updateUser = async (req, res) => {
         
     } else {
         var errorMsg = "faltam parametros";
-        res.status(400).send(
+        res.status(200).send(
             {
                 sucesso : 0,
                 cod_erro : 3,
@@ -149,7 +149,7 @@ exports.changePassword = async (req, res) => {
             );
         } catch (err) {
             var errorMsg = "erro BD: ";
-            res.status(500).send(
+            res.status(200).send(
                 {
                     sucesso : 0,
                     cod_erro : 2,
@@ -159,7 +159,7 @@ exports.changePassword = async (req, res) => {
         }
     } else {
         var errorMsg = "faltam parametros";
-        res.status(400).send(
+        res.status(200).send(
             {
                 sucesso : 0,
                 cod_erro : 3,
@@ -185,7 +185,7 @@ exports.deleteUser = async (req, res) => {
         );
     } catch (err) {
         var errorMsg = "erro BD: ";
-        res.status(500).send(
+        res.status(200).send(
             {
                 sucesso : 0,
                 cod_erro : 2,
@@ -214,7 +214,7 @@ exports.getUserDetails = async (req, res) => {
             );
         } catch (err) {
             var errorMsg = "erro BD: ";
-            res.status(500).send(
+            res.status(200).send(
                 {
                     sucesso : 0,
                     cod_erro : 2,
@@ -224,7 +224,7 @@ exports.getUserDetails = async (req, res) => {
         }
     } else {
         var errorMsg = "faltam parametros";
-        res.status(400).send(
+        res.status(200).send(
             {
                 sucesso : 0,
                 cod_erro : 3,
