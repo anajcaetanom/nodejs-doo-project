@@ -62,4 +62,59 @@ exports.registerUser = async (req, res) => {
 
 };
 
-export.updateUser = async
+exports.updateUser = async (req, sec) => {
+    if (req.body.hasOwnProperty('novo_nome') && req.body.hasOwnProperty('novo_email') &&) {
+        
+        const {novo_nome, novo_email} = req.body;
+
+        const hasUserQuery = await db.query (
+            "SELECT login FROM usuarios WHERE login=$1 AND token=$2",
+            [login, token]
+        );
+
+        if (hasUserQuery.rows.length === 1) {
+            try {
+                const updateUserQuery = await db.query (
+                    "UPDATE usuarios SET nome=$1, email=$2 WHERE login=$3",
+                    [nome, email, login]
+                );
+
+                res.status(200).send(
+                    {
+                        sucesso : 1
+                    }
+                );
+            }
+            catch (err) {
+                var errorMsg = "erro BD: ";
+                res.status(200).send(
+                    {
+                        sucesso : 0,
+                        cod_erro : 2,
+                        erro : errorMsg.concat(err)
+                    }
+                );
+            }
+        }
+        else {
+            var errorMsg = "usuario nao encontrado";
+            res.status(200).send(
+                {
+                    sucesso : 0,
+                    cod_erro : 1,
+                    erro : errorMsg
+                }
+            );
+        }
+    }
+    else {
+        var errorMsg = "faltam parametros";
+        res.status(200).send(
+            {
+                sucesso : 0,
+                cod_erro : 3,
+                erro : errorMsg
+            }
+        );
+    }
+}
